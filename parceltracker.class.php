@@ -9,27 +9,26 @@
  * @author Brian Stanback <email@brianstanback.com>
  * @author Thom Dyson <thom@tandemhearts.com>
  * @copyright Copyright (c) 2008, Brian Stanback, Thom Dyson
- * @license http://opensource.org/licenses/gpl-3.0.html GPLv3
+ * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
  * @version 3.0 <27 July 2010>
  * @filesource
  */
 
 /****************************************************************************
-* This file is part of PHP Parcel Tracker
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-****************************************************************************/
+ * Copyright 2008 Brian Stanback, Thom Dyson
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
 
 class ParcelTracker
 {
@@ -39,7 +38,7 @@ class ParcelTracker
      * @var array
      */
     protected $defaultConfig = array(
-        'retrMethod'    => 'curl',      // HTTP retrieval method, 'curl' or 'standard' for to use 
+        'retrMethod'    => 'curl',      // HTTP retrieval method, 'curl' or 'standard' for to use
                                         // built-in PHP stream wrappers
         'dateFormat'    => 'us',        // Setting this to 'us' formats the date/time to U.S. standards,
                                         // Setting it to 'iso' will format using international standards
@@ -79,7 +78,7 @@ class ParcelTracker
         switch (strtolower($this->config['dateFormat'])) {
             case 'us':
                 $this->config['dateFormat'] = $dayOfWeek . 'F j, Y';
-                $this->config['timeFormat'] = 'g:i A'; 
+                $this->config['timeFormat'] = 'g:i A';
                 break;
             case 'iso':
             default:
@@ -150,7 +149,7 @@ class ParcelTracker
 
         return $parcel;
     }
-	
+
     /**
      * Convert result data to a formatted RSS document.
      *
@@ -173,11 +172,11 @@ class ParcelTracker
 
         $output .= $this->rssGenerateFooter();
 
-        return $output;			
+        return $output;
     }
 
     /**
-     * Convert result data to a JavaScript Object Notation (JSON) encoded 
+     * Convert result data to a JavaScript Object Notation (JSON) encoded
      * format for use with XHR/AJAX-based applications.
      *
      * @param array $parcel The tracking result from the getDetails() method.
@@ -239,7 +238,7 @@ class ParcelTracker
         if (isset($data['destination']) && !empty($data['destination'])) {
             $output .= '&lt;b&gt;Destination:&lt;/b&gt; ' . $data['destination'] . '&lt;br/&gt;';
         }
-	
+
         if (isset($data['service']) && !empty($data['service'])) {
             $output .= '&lt;b&gt;Service Type:&lt;/b&gt; ' . $data['service'] . '&lt;br/&gt;';
         }
@@ -265,14 +264,14 @@ class ParcelTracker
         if (isset($data['details']) && !empty($data['details'])) {
             $output .= '&lt;b&gt;Details:&lt;/b&gt; ' . $data['details'] .  '&lt;br/&gt;';
         }
-		
-        $output .= '</description>' . "\n";	
+
+        $output .= '</description>' . "\n";
         $output .= "\t\t\t" . '<pubDate>' . date('D, d M Y H:i:s O') . '</pubDate>' . "\n";
         $output .= "\t\t" . '</item>' . "\n";
 
         return $output;
     }
- 
+
     /**
      * Generate the item for a tracked origin/destination point.
      *
@@ -306,7 +305,7 @@ class ParcelTracker
 
         return $output;
     }
-	
+
     /**
      * Build and return an invalid tracking number error.
      *
