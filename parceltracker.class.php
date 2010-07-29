@@ -1,4 +1,6 @@
 <?php
+include_once('abstractcarrier.class.php');
+
 /**
  * Parcel Tracker Class
  *
@@ -33,6 +35,13 @@
 class ParcelTracker
 {
     /**
+     * An array of instantiated carriers.
+     *
+     * @var array
+     */
+    protected $carriers;
+
+    /**
      * Default configuration options.
      *
      * @var array
@@ -44,7 +53,7 @@ class ParcelTracker
                                         // Setting it to 'iso' will format using international standards
         'showDayOfWeek' => true,        // Set to true to include day of week in the dates, false for no day of week
         'carriersDir'   => 'carriers',  // Path to the carrier modules
-        'carriers'      => array(       // List of carrier modules
+        'carriers'      => array(       // List of carrier modules to load
                 'dhl'       => array('DHL', 'DHLCarrier', 'dhl.class.php'),
                 'fedex'     => array('FedEx', 'FedExCarrier', 'fedex.class.php'),
                 'smartpost' => array('SmartPost', 'SmartPostCarrier', 'smartpost.class.php'),
@@ -85,6 +94,25 @@ class ParcelTracker
                 $this->config['dateFormat'] = $dayOfWeek . 'Y-m-d';
                 $this->config['timeFormat'] = 'G:i';
         }
+
+        // Load and verify each of the carrier modules so that they are available
+        // for auto-detection of tracking numbers.
+        $this->carriers = array();
+        foreach ($this->config['carriers'] as $carrierKey => $carrier) {
+            list($carrierName, $carrierClass, $carrierFile) = $carrier;
+
+            include_once($this->config['carriersDir'] . '/' . $carrierFile);
+
+            if (!class_exists($carrierClass)) {
+                die('Error: A carrier class file could not be located (' . $carrierFile . ')');
+            }
+
+            $this->carriers[$carrierKey] = new $carrierClass($this->config);
+
+            if (!($this->carriers[$carrierKey] instanceof AbstractCarrier)) {
+                die('Error: A carrier class was loaded which doesn\'t extend AbstractCarrier (' . $carrierClass . ')');
+            }
+        }
     }
 
     /**
@@ -118,32 +146,34 @@ class ParcelTracker
      *         ...
      *     )
      *
-     * @param string $carrier The name of the carrier to use (defined in $config['carriers']).
      * @param string $trackingNumber The tracking number to use for collecting parcel details.
+     * @param string $carrier The name of the carrier to use (defined in $config['carriers']).
+     *     If this is blank or unspecified, auto-detection of the carrier will be attempted.
      * @return array|boolean An associative array with package stats in the 'summary' key and
      *     an array of locations in the 'locations' key, or false if the query failed.
      * @todo Throw an exception if a problem is encountered, returning the specific error.
      */
-    public function getDetails($carrier, $trackingNumber) {
+    public function getDetails($trackingNumber, $carrier = '') {
         $parcel = false;
 
-	if (isset($this->config['carriers'][$carrier])) {
-            list($carrierName, $carrierClass, $carrierFile) = $this->config['carriers'][$carrier];
-
-            include_once($this->config['carriersDir'] . '/' . $carrierFile);
-            if (!class_exists($carrierClass)) {
-                return false;
-            }
-
-            $parserModule = new $carrierClass($this->config);
-            if ($parserModule instanceof AbstractCarrier) {
-                $parcel = $parserModule->parse($trackingNumber);
-                if ($parcel) {
-                    $parcel = array_merge(array(
-                        'carrier' => $carrierName,
-                        'trackingNumber' => $trackingNumber
-                    ), $parcel);
+        if (empty($carrier)) {
+            // Auto-detect the carrier
+            foreach ($this->carriers as $carrierKey => $instance) {
+                if ($instance->isTrackingNumber($trackingNumber)) {
+                    $carrier = $carrierKey;
+                    break;
                 }
+            }
+        }
+
+        if (isset($this->carriers[$carrier])) {
+            // Get the package data
+            $parcel = $this->carriers[$carrier]->fetchData($trackingNumber);
+            if ($parcel) {
+                $parcel = array_merge(array(
+                    'carrier' => $carrierName,
+                    'trackingNumber' => $trackingNumber
+                ), $parcel);
             }
         }
 

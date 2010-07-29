@@ -33,8 +33,10 @@ class USPSCarrier extends AbstractCarrier
 {
     /**
      * Parse and return USPS tracking details.
+     *
+     * @inheritdoc
      */
-    public function parse($trackingNumber) {
+    public function fetchData($trackingNumber) {
         $link = 'http://trkcnfrm1.smi.usps.com/PTSInternetWeb/InterLabelInquiry.do?strOrigTrackNum=' . urlencode($trackingNumber);
         $html = $this->fetchUrl($link);
 
@@ -90,5 +92,14 @@ class USPSCarrier extends AbstractCarrier
             'details' => $stats,
             'locations' => $locations
         );
+    }
+
+    /**
+     * Validate a USPS tracking number.
+     *
+     * @inheritdoc
+     */
+    function isTrackingNumber($trackingNumber) {
+        return false;
     }
 }

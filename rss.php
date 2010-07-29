@@ -33,14 +33,13 @@
 // Configuration overrides, see parceltracker.class.php for all options and descriptions
 $config = array(
     'cacheDir' => 'cache',     // The cache directory
-    'cacheInterval' => 14400,  // The number of seconds before reloading tracking info
+    'cacheInterval' => 0,  // The number of seconds before reloading tracking info
                                // Set to 0 to disable caching
     'dateFormat' => 'us',
     'showDayOfWeek' => true
 );
 
-// Include the requred classes
-include_once('abstractcarrier.class.php');
+// Include the requred class
 include_once('parceltracker.class.php');
 
 // Get the requested package details
@@ -82,7 +81,7 @@ if ($config['cacheInterval'] > 0) {
 if (empty($rss)) {
     // Perform a new tracking lookup
     $tracker = new ParcelTracker($config);
-    $parcel = $tracker->getDetails($carrier, $trackingNumber);
+    $parcel = $tracker->getDetails($trackingNumber, $carrier);
 
     // DEBUG
     //print_r($parcel);

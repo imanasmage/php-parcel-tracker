@@ -34,8 +34,10 @@ class DHLCarrier extends AbstractCarrier
 {
     /**
      * Parse and return DHL tracking details.
+     *
+     * @inheritdoc
      */
-    public function parse($trackingNumber) {
+    public function fetchData($trackingNumber) {
         $link = 'http://track.dhl-usa.com/TrackByNbr.asp?ShipmentNumber=' . $trackingNumber;
         $html = $this->fetchUrl($link);
 
@@ -101,6 +103,15 @@ class DHLCarrier extends AbstractCarrier
             'details' => $stats,
             'locations' => $locations
         );
+    }
+
+    /**
+     * Validate a DHL tracking number.
+     *
+     * @inheritdoc
+     */
+    function isTrackingNumber($trackingNumber) {
+        return false;
     }
 }
 

@@ -33,8 +33,10 @@ class UPSCarrier extends AbstractCarrier
 {
     /**
      * Get tracking data from UPS.
+     *
+     * @inheritdoc
      */
-    public function parse($trackingNumber) {
+    public function fetchData($trackingNumber) {
         $link = 'http://wwwapps.ups.com/WebTracking/detail?&showSpPkgProg=Show%20Package%20Progress&tracknum=' . $trackingNumber;
         $html = $this->fetchUrl($link);
 
@@ -188,5 +190,14 @@ class UPSCarrier extends AbstractCarrier
             'details' => $stats,
             'locations' => $locations
         );
+    }
+
+    /**
+     * Validate a UPS tracking number.
+     *
+     * @inheritdoc
+     */
+    function isTrackingNumber($trackingNumber) {
+        return false;
     }
 }

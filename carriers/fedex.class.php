@@ -36,8 +36,10 @@ class FedExCarrier extends AbstractCarrier
 {
     /**
      * Parse and return FedEx tracking details.
+     *
+     * @inheritdoc
      */
-    public function parse($trackingNumber) {
+    public function fetchData($trackingNumber) {
         $link = 'http://www.fedex.com/Tracking/Detail?template_type=detail&trackNum=' . $trackingNumber;
         $html = $this->fetchUrl($link);
 
@@ -95,5 +97,14 @@ class FedExCarrier extends AbstractCarrier
             'details' => $stats,
             'locations' => $locations
         );
+    }
+
+    /**
+     * Validate a FedEx tracking number.
+     *
+     * @inheritdoc
+     */
+    function isTrackingNumber($trackingNumber) {
+        return false;
     }
 }

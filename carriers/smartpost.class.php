@@ -33,8 +33,10 @@ class SmartPostCarrier extends AbstractCarrier
 {
     /**
      * Parse and return Smart Post tracking details.
+     *
+     * @inheritdoc
      */
-    public function parse($trackingNumber) {
+    public function fetchData($trackingNumber) {
         $link = 'http://spportal.fedex.com/sp/tracking.htm?PID=' . $trackingNumber;
         $html = $this->fetchUrl($link);
 
@@ -76,5 +78,14 @@ class SmartPostCarrier extends AbstractCarrier
             'details' => $stats,
             'locations' => $locations
         );
+    }
+
+    /**
+     * Validate a FedEx SmartPost tracking number.
+     *
+     * @inheritdoc
+     */
+    function isTrackingNumber($trackingNumber) {
+        return false;
     }
 }

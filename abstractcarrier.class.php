@@ -87,10 +87,24 @@ abstract class AbstractCarrier
      * @return array|boolean An associative array containing the 'details' and 'locations' or
      *    false if an error occured.
      */
-    abstract function parse($trackingNumber);
+    abstract function fetchData($trackingNumber);
 
     /**
-     * Fetch data from a URL.
+     * Validate the tracking number.
+     *
+     * This method should be overridden by concrete carriers but the default
+     * implementation can be kept if a validity checking checking algorithm is 
+     * not available.
+     *
+     * @param string $trackingNumber The tracking number to validate.
+     * @return boolean Returns true if the number is valid or false if unrecognized.
+     */
+    function isTrackingNumber($trackingNumber) {
+        return false;
+    }
+
+    /**
+     * Shared metod for fetching data from a URL.
      *
      * @param string $url The url to fetch the HTML source for.
      */
