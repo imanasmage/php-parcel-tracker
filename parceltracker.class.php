@@ -307,6 +307,10 @@ class ParcelTracker
             $output .= '&lt;b&gt;Last Location:&lt;/b&gt; ' . $data['last_location'] .  '&lt;br/&gt;';
         }
 
+        if (isset($data['next_location']) && !empty($data['next_location'])) {
+            $output .= '&lt;b&gt;Next Location:&lt;/b&gt; ' . $data['next_location'] .  '&lt;br/&gt;';
+        }
+
         if (isset($data['details']) && !empty($data['details'])) {
             $output .= '&lt;b&gt;Details:&lt;/b&gt; ' . $data['details'] .  '&lt;br/&gt;';
         }
