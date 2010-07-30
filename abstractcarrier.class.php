@@ -92,14 +92,14 @@ abstract class AbstractCarrier
     /**
      * Validate the tracking number.
      *
-     * This method should be overridden by concrete carriers but the default
-     * implementation can be kept if a validity checking checking algorithm is 
-     * not available.
+     * This method should be overridden by each concrete carrier.
+     * The below stub return is used in the event that a check digit
+     * algorithm is not available.
      *
      * @param string $trackingNumber The tracking number to validate.
      * @return boolean Returns true if the number is valid or false if unrecognized.
      */
-    function isTrackingNumber($trackingNumber) {
+    public function isTrackingNumber($trackingNumber) {
         return false;
     }
 

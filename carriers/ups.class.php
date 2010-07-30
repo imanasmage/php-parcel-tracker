@@ -197,7 +197,7 @@ class UPSCarrier extends AbstractCarrier
      *
      * @inheritdoc
      */
-    function isTrackingNumber($trackingNumber) {
+    public function isTrackingNumber($trackingNumber) {
         return false;
     }
 }

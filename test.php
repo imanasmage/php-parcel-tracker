@@ -1,15 +1,16 @@
 <?php
 /**
- * PHP Parcel Tracker
+ * PHP Parcel Tracker Test Driver
  *
- * Cache-enabled RSS gateway for tracking packages.
- * Requires PHP 5 or greater.
+ * A simple test driver for validating the detecting and data gathering
+ * of different carriers/tracking numbers.
  *
  * @package PHP_Parcel_Tracker
  * @author Brian Stanback <email@brianstanback.com>
  * @copyright Copyright (c) 2008, Brian Stanback
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
  * @version 3.0 <27 July 2010>
+ * @todo Integrate tests with PHPUnit or SimpleUnit.
  * @filesource
  */
 
@@ -29,28 +30,54 @@
  * limitations under the License.
  ***************************************************************************/
 
-$testNumbers = array(
-	array('069537856437603', 'fedex'),
-	array('069537856437603'),
-);
-
 include_once('parceltracker.class.php');
 
-$tracker = new ParcelTracker();
+$testNumbers = array(
+    // Insert your tracking numbers to test here
+);
 
-foreach ($testNumbers as $test) {
-	list($number, $carrier) = $test;
+testDetection($testNumbers);
+//testDataRetrieval($testNumbers);
 
-	$parcel = $tracker->getDetails($number, $carrier);
+/**
+ * Test detection of carriers.
+ *
+ * @param $testNumbers array An array of tracking numbers to test.
+ */
+function testDetection($testNumbers) {
+    $tracker = new ParcelTracker();
 
-	if (!$parcel) {
-		// Assert false
+    foreach ($testNumbers as $number) {
+        $carrier = $tracker->detectCarrier($number);
 
-		echo "FAIL $number ($carrier)\n";
-	} else {
-		// Assert true
-		//print_r($parcel);
+        if (!$carrier) {
+            // Assert false
+            echo "FAIL $number\n";
+        } else {
+            // Assert true
+            echo "PASS $number ($carrier)\n";
+        }
+    }
+}
 
-		echo "PASS $number ($carrier)\n";
-	}
+/**
+ * Test tracking data retrieval.
+ *
+ * @param $testNumbers array An array of tracking numbers to test.
+ */
+function testDataRetrieval($testNumbers) {
+    $tracker = new ParcelTracker();
+
+    foreach ($testNumbers as $number) {
+        $parcel = $tracker->getDetails($number);
+
+        if (!$parcel) {
+            // Assert false
+            echo "FAIL $number\n";
+        } else {
+            // Assert true
+            echo "PASS $number\n";
+            //print_r($parcel);
+        }
+    }
 }

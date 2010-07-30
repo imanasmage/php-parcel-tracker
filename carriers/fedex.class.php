@@ -102,9 +102,43 @@ class FedExCarrier extends AbstractCarrier
     /**
      * Validate a FedEx tracking number.
      *
+     * There's probably a faster implementation for this using bitwise math, right now it's
+     * essentially an implementation of exactly what's outlined on the bar code
+     * specification document.
+     *
+     * @link http://fedex.com/us/solutions/ppe/FedEx_Ground_Label_Layout_Specification.pdf
      * @inheritdoc
      */
-    function isTrackingNumber($trackingNumber) {
-        return false;
+    public function isTrackingNumber($trackingNumber) {
+        $trackingNumber = strrev($trackingNumber);
+
+        if (substr($trackingNumber, -2) == '00') {
+            // Possible SSCC-18
+            $numDigits = 16;
+            $testDigits = substr($trackingNumber, 1, $numDigits);
+        } else {
+            // Possible 96 (with or without service/ucc/ean/scnc identifiers)
+            $numDigits = 14;
+            $testDigits = substr($trackingNumber, 1, $numDigits);
+        }
+
+        $evenSum = 0;
+        for ($i=0; $i<$numDigits; $i++) {
+            if (!($i % 2)) {
+                $evenSum += $testDigits[$i];
+            }
+        }
+
+        $oddSum = 0;
+        for ($i=0; $i<$numDigits; $i++) {
+            if ($i % 2) {
+                $oddSum += $testDigits[$i];
+            }
+        }
+
+        $sum = (($evenSum * 3) + $oddSum);
+        $checkDigit = ((ceil($sum / 10) * 10) - $sum);
+
+        return ($checkDigit == $trackingNumber[0]);
     }
 }

@@ -30,6 +30,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+include_once('parceltracker.class.php');
+
 // Configuration overrides, see parceltracker.class.php for all options and descriptions
 $config = array(
     'cacheDir' => 'cache',     // The cache directory
@@ -38,9 +40,6 @@ $config = array(
     'dateFormat' => 'us',
     'showDayOfWeek' => true
 );
-
-// Include the requred class
-include_once('parceltracker.class.php');
 
 // Get the requested package details
 $carrier = isset($_REQUEST['type']) ? $_REQUEST['type'] : '';

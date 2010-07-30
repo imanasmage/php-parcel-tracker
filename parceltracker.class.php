@@ -1,6 +1,4 @@
 <?php
-include_once('abstractcarrier.class.php');
-
 /**
  * Parcel Tracker Class
  *
@@ -31,6 +29,8 @@ include_once('abstractcarrier.class.php');
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
+include_once('abstractcarrier.class.php');
 
 class ParcelTracker
 {
@@ -157,13 +157,7 @@ class ParcelTracker
         $parcel = false;
 
         if (empty($carrier)) {
-            // Auto-detect the carrier
-            foreach ($this->carriers as $carrierKey => $instance) {
-                if ($instance->isTrackingNumber($trackingNumber)) {
-                    $carrier = $carrierKey;
-                    break;
-                }
-            }
+            $carrier = $this->detectCarrier($trackingNumber);
         }
 
         if (isset($this->carriers[$carrier])) {
@@ -178,6 +172,17 @@ class ParcelTracker
         }
 
         return $parcel;
+    }
+
+    /**
+     * Detect which carrier a particular tracking number belongs to.
+     */
+    public function detectCarrier($trackingNumber) {
+        foreach ($this->carriers as $carrierKey => $instance) {
+            if ($instance->isTrackingNumber($trackingNumber)) {
+                return $carrierKey;
+            }
+        }
     }
 
     /**
