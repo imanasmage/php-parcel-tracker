@@ -83,7 +83,7 @@ class DHLGermanyCarrier extends AbstractCarrier
                          break;
                      case 3:
                          // Status update time
-                         $stats['lastupdate'] = $cols->item(1)->nodeValue;
+                         $stats['time'] = $cols->item(1)->nodeValue;
                          break;
                      case 4:
                          // Next step
