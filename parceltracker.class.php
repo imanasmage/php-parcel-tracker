@@ -176,6 +176,10 @@ class ParcelTracker
 
     /**
      * Detect which carrier a particular tracking number belongs to.
+     *
+     * @param $trackingNumber string The tracking number to detect.
+     * @return string|boolean The array key of the carrier, as defined in the
+     *    carriers configuration setting or false if no match was found.
      */
     public function detectCarrier($trackingNumber) {
         foreach ($this->carriers as $carrierKey => $instance) {
@@ -183,6 +187,7 @@ class ParcelTracker
                 return $carrierKey;
             }
         }
+        return false;
     }
 
     /**

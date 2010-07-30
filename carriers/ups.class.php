@@ -201,7 +201,6 @@ class UPSCarrier extends AbstractCarrier
      * comment.
      *
      * @link http://answers.google.com/answers/threadview/id/207899.html
-     * @author Brian Stanback <stanback@gmail.com>
      * @inheritdoc
      */
     public function isTrackingNumber($trackingNumber) {

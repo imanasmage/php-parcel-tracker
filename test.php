@@ -33,17 +33,14 @@
 include_once('parceltracker.class.php');
 
 $testNumbers = array(
-    '9611020987654312345672',     // FedEx '96'
-    '9611804854517907553445',     // FedEx '96'
     '000123450000000027',         // FedEx '00'
-    '048588671831418',            // FedEx (Short Form)
-    '069537856437603',            // FedEx
-    '075570070675070',            // FedEx
-    '02185456301070647003',       // SmartPost (FedEx + USPS)
+    '9611020987654312345672',     // FedEx '96'
+    '987654312345672',            // FedEx '96' (Short Form)
     '1Z14EW570395362828',         // UPS
     '1Z193E150360180097',         // UPS
     '1ZE157330346611450',         // UPS
-    '1Z787Y880391648309'          // UPS
+    '1Z787Y880391648309',         // UPS
+    '02185456301070647003',       // SmartPost (FedEx + USPS)
 );
 
 testDetection($testNumbers);
