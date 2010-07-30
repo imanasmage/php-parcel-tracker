@@ -1,17 +1,18 @@
 <?php
 /**
- * Parses and returns DHL package details.
+ * Parses and returns DHL (USA) package details.
  *
  * @package PHP_Parcel_Tracker
  * @subpackage Carrier
- * @author Brian Stanback <email@brianstanback.com>
- * @author Thom Dyson <thom@tandemhearts.com>
- * @copyright Copyright (c) 2008, Brian Stanback, Thom Dyson
+ * @author Brian Stanback <stanback@gmail.com>
+ * @copyright Copyright (c) 2008, Brian Stanback
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
  * @version 3.0 <27 July 2010>
  * @filesource
  * @inheritdoc
- * @todo Map OnTrac (used by small shippers) to replace the DHL function
+ * @todo Map OnTrac (used by small shippers) to replace the DHL function?
+ * @todo Use PHP's SimpleXml (XMLReader) or DOMDocument instead of the
+ *     inline clsss.
  */
 
 /****************************************************************************
@@ -108,6 +109,9 @@ class DHLCarrier extends AbstractCarrier
     /**
      * Validate a DHL tracking number.
      *
+     * Looking for a reference on this.
+     *
+     * @link http://www.activebarcode.com/codes/allbarcodes.html
      * @inheritdoc
      */
     public function isTrackingNumber($trackingNumber) {

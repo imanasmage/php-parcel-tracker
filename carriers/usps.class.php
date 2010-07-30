@@ -4,12 +4,13 @@
  *
  * @package PHP_Parcel_Tracker
  * @subpackage Carrier
- * @author Brian Stanback <email@brianstanback.com>
+ * @author Brian Stanback <stanback@gmail.com>
  * @author Thom Dyson <thom@tandemhearts.com>
  * @copyright Copyright (c) 2008, Brian Stanback, Thom Dyson
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
  * @version 3.0 <27 July 2010>
  * @filesource
+ * @todo Consider implementation using DOMDocument.
  * @inheritdoc
  */
 
@@ -95,11 +96,42 @@ class USPSCarrier extends AbstractCarrier
     }
 
     /**
-     * Validate a USPS tracking number.
+     * Validate a USPS tracking number based on USS Code 128 Subset C 20-digit barcode PIC.
+     *
+     * USPS Publication 109 was used for this implementation, the other links are provided
+     * for future cross-referencing.
+     *
+     * @link http://www.usps.com/cpim/ftp/pubs/pub109.pdf (Publication 109. Special Services Technical Guide, pg. 19)
+     * @link http://www.usps.com/cpim/ftp/pubs/pub91.pdf (Publication 91. Delivery and Signature Confirmation Numbers, pg. 79)
+     * @link http://www.usps.com/cpim/ftp/pubs/pub97.pdf (Publication 97. Express Mail Manifesting Technical Guide, pg. 59)
      *
      * @inheritdoc
      */
     public function isTrackingNumber($trackingNumber) {
-        return false;
+        $trackingNumberLen = strlen($trackingNumber);
+
+        if (($trackingNumberLen != 20 && $trackingNumberLen != 22) || !is_numeric($trackingNumber)) {
+            return false;
+        }
+
+        if ($trackingNumberLen == 22) {
+            // Remove service type code
+            $trackingNumber = substr($trackingNumber, 2);
+        }
+
+        $evenSum = 0;
+        $oddSum = 0;
+        for ($i=18; $i>=0; $i--) {
+            if ($i % 2) {
+                $evenSum += $trackingNumber[$i];
+            } else {
+                $oddSum += $trackingNumber[$i];
+            }
+        }
+
+        $sum = ($oddSum + ($evenSum * 3));
+        $checkDigit = ((ceil($sum / 10) * 10) - $sum);
+
+        return ($checkDigit == $trackingNumber[19]);
     }
 }

@@ -5,7 +5,7 @@
  * An abstract base class providing convienence methods for its concrete carriers.
  *
  * @package PHP_Parcel_Tracker
- * @author Brian Stanback <email@brianstanback.com>
+ * @author Brian Stanback <stanback@gmail.com>
  * @copyright Copyright (c) 2008, Brian Stanback
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
  * @version 3.0 <27 July 2010>
@@ -63,10 +63,12 @@ abstract class AbstractCarrier
      *         'status'        => [string],  // Current status
      *         'destination'   => [string],  // Destination location
      *         'last_location' => [string],  // Last known location
+     *         'next_location' => [string],  // Next known location
      *         'departure'     => [string],  // Departure date/time
      *         'est_arrival'   => [string],  // Estimated arrival date/time
      *         'arrival'       => [string],  // Arrival date/time
-     *         'details'       => [string]   // Miscellaneous details
+     *         'time'          => [string]   // The last updated date/time
+     *         'details'       => [string],  // Miscellaneous details
      *     ),
      *     'locations' => array(
      *         [0] => array(

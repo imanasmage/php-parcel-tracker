@@ -4,12 +4,13 @@
  *
  * @package PHP_Parcel_Tracker
  * @subpackage Carrier
- * @author Brian Stanback <email@brianstanback.com>
+ * @author Brian Stanback <stanback@gmail.com>
  * @author Thom Dyson <thom@tandemhearts.com>
  * @copyright Copyright (c) 2008, Brian Stanback, Thom Dyson
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
  * @version 3.0 <27 July 2010>
  * @filesource
+ * @todo Consider implementation using DOMDocument.
  * @inheritdoc
  */
 
@@ -82,6 +83,10 @@ class SmartPostCarrier extends AbstractCarrier
 
     /**
      * Validate a FedEx SmartPost tracking number.
+     *
+     * The matching algorithm for SmartPost is identical to the one for USPS,
+     * therefore, one must specify the carrier manually if smart post tracking
+     * data is desired.
      *
      * @inheritdoc
      */

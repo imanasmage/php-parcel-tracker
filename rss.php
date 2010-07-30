@@ -6,7 +6,7 @@
  * Requires PHP 5 or greater.
  *
  * @package PHP_Parcel_Tracker
- * @author Brian Stanback <email@brianstanback.com>
+ * @author Brian Stanback <stanback@gmail.com>
  * @author Thom Dyson <thom@tandemhearts.com>
  * @copyright Copyright (c) 2008, Brian Stanback, Thom Dyson
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
@@ -35,7 +35,7 @@ include_once('parceltracker.class.php');
 // Configuration overrides, see parceltracker.class.php for all options and descriptions
 $config = array(
     'cacheDir' => 'cache',     // The cache directory
-    'cacheInterval' => 0,  // The number of seconds before reloading tracking info
+    'cacheInterval' => 14400,  // The number of seconds before reloading tracking info
                                // Set to 0 to disable caching
     'dateFormat' => 'us',
     'showDayOfWeek' => true

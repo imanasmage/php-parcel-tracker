@@ -4,7 +4,7 @@
  *
  * @package PHP_Parcel_Tracker
  * @subpackage Carrier
- * @author Brian Stanback <email@brianstanback.com>
+ * @author Brian Stanback <stanback@gmail.com>
  * @author Thom Dyson <thom@tandemhearts.com>
  * @copyright Copyright (c) 2008, Brian Stanback, Thom Dyson
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0

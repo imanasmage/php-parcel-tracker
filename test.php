@@ -6,7 +6,7 @@
  * of different carriers/tracking numbers.
  *
  * @package PHP_Parcel_Tracker
- * @author Brian Stanback <email@brianstanback.com>
+ * @author Brian Stanback <stanback@gmail.com>
  * @copyright Copyright (c) 2008, Brian Stanback
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
  * @version 3.0 <27 July 2010>
@@ -32,19 +32,14 @@
 
 include_once('parceltracker.class.php');
 
+// Enter your test numbers here
 $testNumbers = array(
-    '000123450000000027',         // FedEx '00'
-    '9611020987654312345672',     // FedEx '96'
-    '987654312345672',            // FedEx '96' (Short Form)
-    '1Z14EW570395362828',         // UPS
-    '1Z193E150360180097',         // UPS
-    '1ZE157330346611450',         // UPS
-    '1Z787Y880391648309',         // UPS
-    '02185456301070647003',       // SmartPost (FedEx + USPS)
+    // '000123450000000027',
+    // '9611020987654312345672',
 );
 
 testDetection($testNumbers);
-//testDataRetrieval($testNumbers);
+testDataRetrieval($testNumbers);
 
 /**
  * Test detection of carriers.
@@ -52,19 +47,29 @@ testDetection($testNumbers);
  * @param $testNumbers array An array of tracking numbers to test.
  */
 function testDetection($testNumbers) {
+    echo ">>> Now testing carrier detection:\n\n";
+
     $tracker = new ParcelTracker();
+
+    $numTests = count($testNumbers);
+    $failures = 0;
+    $successes = 0;
 
     foreach ($testNumbers as $number) {
         $carrier = $tracker->detectCarrier($number);
 
         if (!$carrier) {
             // Assert false
-            echo "FAIL $number\n";
+            echo "\tFAIL $number\n";
+            $failures++;
         } else {
             // Assert true
-            echo "PASS $number ($carrier)\n";
+            echo "\tPASS $number ($carrier)\n";
+            $successes++;
         }
     }
+
+    echo "\nRan $numTests tests, $failures failures and $successes successes.\n\n";
 }
 
 /**
@@ -73,18 +78,30 @@ function testDetection($testNumbers) {
  * @param $testNumbers array An array of tracking numbers to test.
  */
 function testDataRetrieval($testNumbers) {
+    echo ">>> Now testing retrieval of tracking data:\n\n";
+
     $tracker = new ParcelTracker();
+
+    $numTests = count($testNumbers);
+    $failures = 0;
+    $successes = 0;
 
     foreach ($testNumbers as $number) {
         $parcel = $tracker->getDetails($number);
 
         if (!$parcel) {
             // Assert false
-            echo "FAIL $number\n";
+            echo "\tFAIL $number\n";
+            $failures++;
         } else {
             // Assert true
-            echo "PASS $number\n";
+            echo "\tPASS $number\n";
+            $successes++;
+
+            // DEBUG
             //print_r($parcel);
         }
     }
+
+    echo "\nRan $numTests tests, $failures failures and $successes successes.\n";
 }

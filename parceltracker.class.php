@@ -5,8 +5,11 @@
  * A class for parsing tracking details given a carrier and tracking number,
  * and returning the data as an array, RSS feed, or SOAP string.
  *
+ * NOTE: This class should be used in conjunction with a caching mechanism
+ * of your choice, see rss.php included in this project for an example.
+ *
  * @package PHP_Parcel_Tracker
- * @author Brian Stanback <email@brianstanback.com>
+ * @author Brian Stanback <stanback@gmail.com>
  * @author Thom Dyson <thom@tandemhearts.com>
  * @copyright Copyright (c) 2008, Brian Stanback, Thom Dyson
  * @license http://www.apache.org/licenses/LICENSE-2.0.html Apache 2.0
@@ -54,11 +57,12 @@ class ParcelTracker
         'showDayOfWeek' => true,        // Set to true to include day of week in the dates, false for no day of week
         'carriersDir'   => 'carriers',  // Path to the carrier modules
         'carriers'      => array(       // List of carrier modules to load
-                'dhl'       => array('DHL', 'DHLCarrier', 'dhl.class.php'),
-                'fedex'     => array('FedEx', 'FedExCarrier', 'fedex.class.php'),
-                'smartpost' => array('SmartPost', 'SmartPostCarrier', 'smartpost.class.php'),
-                'ups'       => array('UPS', 'UPSCarrier', 'ups.class.php'),
-                'usps'      => array('USPS', 'USPSCarrier', 'usps.class.php')
+                'dhl'         => array('DHL', 'DHLCarrier', 'dhl.class.php'),
+                'ups'         => array('UPS', 'UPSCarrier', 'ups.class.php'),
+                'usps'        => array('USPS', 'USPSCarrier', 'usps.class.php'),
+                'fedex'       => array('FedEx', 'FedExCarrier', 'fedex.class.php'),
+                'smartpost'   => array('SmartPost', 'SmartPostCarrier', 'smartpost.class.php'),
+                'dhl_germany' => array('DHL', 'DHLGermanyCarrier', 'dhl_germany.class.php')
         )
     );
 
@@ -128,10 +132,12 @@ class ParcelTracker
      *         'status'        => [string],  // Current status
      *         'destination'   => [string],  // Destination location
      *         'last_location' => [string],  // Last known location
+     *         'next_location' => [string],  // Next known location
      *         'departure'     => [string],  // Departure date/time
      *         'est_arrival'   => [string],  // Estimated arrival date/time
      *         'arrival'       => [string],  // Arrival date/time
-     *         'details'       => [string]   // Miscellaneous details
+     *         'details'       => [string],  // Miscellaneous details
+     *         'time'          => [string]   // The last updated date/time
      *     ),
      *     'locations' => array(
      *         [0] => array(
@@ -265,7 +271,7 @@ class ParcelTracker
             $output .= '&lt;b&gt;Status:&lt;/b&gt; ' . $data['status'] . '&lt;br/&gt;';
         }
 
-        $output .= '&lt;b&gt;As of:&lt;/b&gt; ' . date($this->config['dateFormat'] . ' ' . $this->config['timeFormat'], time()) . '&lt;br/&gt;';
+        $output .= '&lt;b&gt;As of:&lt;/b&gt; ' . date($this->config['dateFormat'] . ' ' . $this->config['timeFormat'], isset($data['time']) ? strtotime($data['time']) : time()) . '&lt;br/&gt;';
 
         if (isset($data['departure']) && !empty($data['departure'])) {
             if (($departureTime = @strtotime($data['departure'])) != false) {
