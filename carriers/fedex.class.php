@@ -111,7 +111,8 @@ class FedExCarrier extends AbstractCarrier
 
     /**
      * Validate a FedEx (Ground) tracking number by doing an initial sanity check, determining
-     * the type, and verifying the check bit for the detected target type.
+     * the type (SSCC-18 vs '96', which share the same algorithm but have different digit
+     * positions), and verifying the check bit for the detected target type.
      *
      * @link http://fedex.com/us/solutions/ppe/FedEx_Ground_Label_Layout_Specification.pdf
      * @param $trackingNumber string The tracking number to perform the test on.
@@ -134,17 +135,14 @@ class FedExCarrier extends AbstractCarrier
             $testDigits = substr($trackingNumber, 1, $numDigits);
         }
 
-        $oddSum = 0;
-        $evenSum = 0;
+        $weightings = array(3, 1);
+        $numWeightings = 2;
+
+        $sum = 0;
         for ($i=0; $i<$numDigits; $i++) {
-            if ($i % 2) {
-                $oddSum += $testDigits[$i];
-            } else {
-                $evenSum += $testDigits[$i];
-            }
+            $sum += ($weightings[$i % $numWeightings] * $testDigits[$i]);
         }
 
-        $sum = ($oddSum + ($evenSum * 3));
         $checkDigit = ((ceil($sum / 10) * 10) - $sum);
 
         return ($checkDigit == $trackingNumber[0]);
@@ -163,12 +161,12 @@ class FedExCarrier extends AbstractCarrier
             return false;
         }
 
-        $checkDigits = array(1, 3, 7);
-        $numCheckDigits = 3;
+        $weightings = array(1, 3, 7);
+        $numWeightings = 3;
 
         $sum = 0;
         for ($i=10; $i>=0; $i--) {
-            $sum += ($checkDigits[(10 - $i) % $numCheckDigits] * $trackingNumber[$i]);
+            $sum += ($weightings[(10 - $i) % $numWeightings] * $trackingNumber[$i]);
         }
 
         $checkDigit = (($sum % 11) % 10);

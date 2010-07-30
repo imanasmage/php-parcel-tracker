@@ -39,7 +39,7 @@ $testNumbers = array(
 );
 
 testDetection($testNumbers);
-testDataRetrieval($testNumbers);
+//testDataRetrieval($testNumbers);
 
 /**
  * Test detection of carriers.

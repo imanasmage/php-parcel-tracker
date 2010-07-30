@@ -119,17 +119,14 @@ class USPSCarrier extends AbstractCarrier
             $trackingNumber = substr($trackingNumber, 2);
         }
 
-        $evenSum = 0;
-        $oddSum = 0;
+        $weightings = array(1, 3);
+        $numWeightings = 2;
+
+        $sum = 0;
         for ($i=18; $i>=0; $i--) {
-            if ($i % 2) {
-                $evenSum += $trackingNumber[$i];
-            } else {
-                $oddSum += $trackingNumber[$i];
-            }
+            $sum += ($weightings[$i % $numWeightings] * $trackingNumber[$i]);
         }
 
-        $sum = ($oddSum + ($evenSum * 3));
         $checkDigit = ((ceil($sum / 10) * 10) - $sum);
 
         return ($checkDigit == $trackingNumber[19]);

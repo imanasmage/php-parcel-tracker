@@ -107,6 +107,10 @@ class DHLGermanyCarrier extends AbstractCarrier
     /**
      * Validate a DHL Germany tracking number.
      *
+     * Stub method until the german DHL tracking number format
+     * can be verified (I need an example or two). See the DHLCarrier
+     * class for modulo 10 implementation.
+     *
      * @inheritdoc
      */
     public function isTrackingNumber($trackingNumber) {

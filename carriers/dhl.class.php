@@ -109,13 +109,32 @@ class DHLCarrier extends AbstractCarrier
     /**
      * Validate a DHL tracking number.
      *
-     * Looking for a reference on this.
+     * Implementation of Identcode and Leitcode algorithms (both are based on modulo 10).
+     *
+     * This is an untested algorithm, please send any feedback to the author.
      *
      * @link http://www.activebarcode.com/codes/allbarcodes.html
+     * @link http://www.activebarcode.com/codes/checkdigit/modulo10.html
      * @inheritdoc
      */
     public function isTrackingNumber($trackingNumber) {
-        return false;
+        $trackingNumberLen = strlen($trackingNumber);
+
+        if (($trackingNumberLen != 12 && $trackingNumberLen != 14) || !is_numeric($trackingNumber)) {
+            return false;
+        }
+
+        $weightings = array(4, 9);
+        $numWeightings = 2;
+
+        $sum = 0;
+        for ($i=0; $i<($trackingNumberLen-1); $i++) {
+            $sum += ($weightings[$i % $numWeightings] * $trackingNumber[$i]);
+        }
+
+        $checkDigit = ((ceil($sum / 10) * 10) - $sum);
+
+        return ($checkDigit == $trackingNumber[$trackingNumberLen-1]);
     }
 }
 

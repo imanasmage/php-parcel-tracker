@@ -57,11 +57,11 @@ class ParcelTracker
         'showDayOfWeek' => true,        // Set to true to include day of week in the dates, false for no day of week
         'carriersDir'   => 'carriers',  // Path to the carrier modules
         'carriers'      => array(       // List of carrier modules to load
-                'dhl'         => array('DHL', 'DHLCarrier', 'dhl.class.php'),
                 'ups'         => array('UPS', 'UPSCarrier', 'ups.class.php'),
                 'usps'        => array('USPS', 'USPSCarrier', 'usps.class.php'),
                 'fedex'       => array('FedEx', 'FedExCarrier', 'fedex.class.php'),
                 'smartpost'   => array('SmartPost', 'SmartPostCarrier', 'smartpost.class.php'),
+                'dhl'         => array('DHL', 'DHLCarrier', 'dhl.class.php'),
                 'dhl_germany' => array('DHL', 'DHLGermanyCarrier', 'dhl_germany.class.php')
         )
     );
