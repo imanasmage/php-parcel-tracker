@@ -28,4 +28,6 @@ CHANGELOG:
       historical USPS numbers. All other carriers are untested. Please direct
       any issues or patches to the Chumby forum topic at 
       <http://forum.chumby.com/viewtopic.php?id=2079&p=2>.
-
+    * Added check-bit and syntax detection for carriers to allow auto-detection
+      of carrier based on the number specified.
+    * Included German DHL community contribution.
