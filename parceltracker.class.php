@@ -171,7 +171,7 @@ class ParcelTracker
             $parcel = $this->carriers[$carrier]->fetchData($trackingNumber);
             if ($parcel) {
                 $parcel = array_merge(array(
-                    'carrier' => $carrierName,
+                    'carrier' => $this->config['carriers'][$carrier][1],
                     'trackingNumber' => $trackingNumber
                 ), $parcel);
             }
