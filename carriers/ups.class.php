@@ -193,11 +193,37 @@ class UPSCarrier extends AbstractCarrier
     }
 
     /**
-     * Validate a UPS tracking number.
+     * Validate a UPS tracking number by doing a sanity check, performing the UPS check
+     * bit algorithm, and verifying the result.
      *
+     * I couldn't find any official documentation regarding the check bit algorithm, but
+     * was able to find a useful description of it at the link included in this method's
+     * comment.
+     *
+     * @link http://answers.google.com/answers/threadview/id/207899.html
+     * @author Brian Stanback <stanback@gmail.com>
      * @inheritdoc
      */
     public function isTrackingNumber($trackingNumber) {
-        return false;
+        $trackingNumber = strtoupper($trackingNumber);
+
+        if (strpos($trackingNumber, '1Z') !== 0 || strlen($trackingNumber) != 18) {
+            return false;
+        }
+
+        $testDigits = strtr(substr($trackingNumber, 2), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', '23456789012345678901234567');
+
+        $sum = 0;
+        for ($i=0; $i<15; $i++) {
+            if ($i % 2) {
+                $sum += $testDigits[$i];
+            }
+            $sum += $testDigits[$i];
+        }
+
+        $checkDigit = ($sum % 10);
+        $checkDigit = ($checkDigit == 0) ? $checkDigit : (10 - $checkDigit);
+
+        return ($checkDigit == $testDigits[15]);
     }
 }

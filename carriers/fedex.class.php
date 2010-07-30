@@ -100,16 +100,23 @@ class FedExCarrier extends AbstractCarrier
     }
 
     /**
-     * Validate a FedEx tracking number.
+     * Validate a FedEx tracking number (accepts express and ground formats).
      *
-     * There's probably a faster implementation for this using bitwise math, right now it's
-     * essentially an implementation of exactly what's outlined in the check bit section of
-     * the bar code specification document.
+     * @inheritdoc
+     */
+    public function isTrackingNumber($trackingNumber) {
+        return ($this->isGround($trackingNumber) ||
+                $this->isExpress($trackingNumber));
+    }
+
+    /**
+     * Validate a FedEx (Ground) tracking number by doing an initial sanity check, determining
+     * the type, and verifying the check bit for the detected target type.
      *
      * @link http://fedex.com/us/solutions/ppe/FedEx_Ground_Label_Layout_Specification.pdf
      * @inheritdoc
      */
-    public function isTrackingNumber($trackingNumber) {
+    public function isGround($trackingNumber) {
         if (strlen($trackingNumber) < 15 || !is_numeric($trackingNumber)) {
             return false;
         }
@@ -126,23 +133,43 @@ class FedExCarrier extends AbstractCarrier
             $testDigits = substr($trackingNumber, 1, $numDigits);
         }
 
+        $oddSum = 0;
         $evenSum = 0;
         for ($i=0; $i<$numDigits; $i++) {
-            if (!($i % 2)) {
+            if ($i % 2) {
+                $oddSum += $testDigits[$i];
+            } else {
                 $evenSum += $testDigits[$i];
             }
         }
 
-        $oddSum = 0;
-        for ($i=0; $i<$numDigits; $i++) {
-            if ($i % 2) {
-                $oddSum += $testDigits[$i];
-            }
-        }
-
-        $sum = (($evenSum * 3) + $oddSum);
+        $sum = ($oddSum + ($evenSum * 3));
         $checkDigit = ((ceil($sum / 10) * 10) - $sum);
 
         return ($checkDigit == $trackingNumber[0]);
+    }
+
+    /**
+     * Validate a FedEx (Express) tracking number by doing an initial sanity check, determining
+     * the type, and verifying the check bit for the detected target type.
+     *
+     * @link http://answers.google.com/answers/threadview/id/207899.html
+     * @inheritdoc
+     */
+    public function isExpress($trackingNumber) {
+        if (strlen($trackingNumber) != 12 || !is_numeric($trackingNumber)) {
+            return false;
+        }
+
+        $checkDigits = array(1, 3, 7);
+        $numCheckDigits = 3;
+
+        $sum = 0;
+        for ($i=10; $i>=0; $i--) {
+            $sum += ($checkDigits[(10 - $i) % $numCheckDigits] * $trackingNumber[$i]);
+        }
+        $remainder = (($sum % 11) % 10);
+
+        return ($remainder == $trackingNumber[11]);
     }
 }
