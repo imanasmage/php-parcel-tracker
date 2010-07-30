@@ -114,7 +114,8 @@ class FedExCarrier extends AbstractCarrier
      * the type, and verifying the check bit for the detected target type.
      *
      * @link http://fedex.com/us/solutions/ppe/FedEx_Ground_Label_Layout_Specification.pdf
-     * @inheritdoc
+     * @param $trackingNumber string The tracking number to perform the test on.
+     * @return boolean True if the passed number is a ground shipment.
      */
     public function isGround($trackingNumber) {
         if (strlen($trackingNumber) < 15 || !is_numeric($trackingNumber)) {
@@ -154,7 +155,8 @@ class FedExCarrier extends AbstractCarrier
      * the type, and verifying the check bit for the detected target type.
      *
      * @link http://answers.google.com/answers/threadview/id/207899.html
-     * @inheritdoc
+     * @param $trackingNumber string The tracking number to perform the test on.
+     * @return boolean True if the passed number is an express shipment.
      */
     public function isExpress($trackingNumber) {
         if (strlen($trackingNumber) != 12 || !is_numeric($trackingNumber)) {
