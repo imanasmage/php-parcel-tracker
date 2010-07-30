@@ -170,8 +170,9 @@ class FedExCarrier extends AbstractCarrier
         for ($i=10; $i>=0; $i--) {
             $sum += ($checkDigits[(10 - $i) % $numCheckDigits] * $trackingNumber[$i]);
         }
-        $remainder = (($sum % 11) % 10);
 
-        return ($remainder == $trackingNumber[11]);
+        $checkDigit = (($sum % 11) % 10);
+
+        return ($checkDigit == $trackingNumber[11]);
     }
 }
