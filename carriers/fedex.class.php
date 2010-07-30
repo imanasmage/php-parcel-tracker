@@ -110,11 +110,11 @@ class FedExCarrier extends AbstractCarrier
      * @inheritdoc
      */
     public function isTrackingNumber($trackingNumber) {
-        $trackingNumber = strrev($trackingNumber);
-
         if (strlen($trackingNumber) < 15 || !is_numeric($trackingNumber)) {
             return false;
         }
+
+        $trackingNumber = strrev($trackingNumber);
 
         if (substr($trackingNumber, -2) == '00') {
             // Possible SSCC-18
