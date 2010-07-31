@@ -111,8 +111,8 @@ class USPSCarrier extends AbstractCarrier
      *
      * @link http://www.usps.com/cpim/ftp/pubs/pub109.pdf (Publication 109. Extra Services Technical Guide, pg. 19)
      * @link http://www.usps.com/cpim/ftp/pubs/pub91.pdf (Publication 91. Confirmation Services Technical Guide pg. 38)
-     *
-     * @inheritdoc
+     * @param $trackingNumber string The tracking number to perform the test on.
+     * @return boolean True if the passed number is a USS 128 shipment.
      */
     public function isUSS128($trackingNumber) {
         $trackingNumberLen = strlen($trackingNumber);
@@ -149,6 +149,8 @@ class USPSCarrier extends AbstractCarrier
      * MOD 10 check may be used for domestic mail but is not needed in this scenario.
      *
      * @link http://www.usps.com/cpim/ftp/pubs/pub97.pdf (Publication 97. Express Mail Manifesting Technical Guide, pg. 64)
+     * @param $trackingNumber string The tracking number to perform the test on.
+     * @return boolean True if the passed number is a USS 39 tracking number.
      */
     public function isUSS39($trackingNumber) {
         if (strlen($trackingNumber) != 13 ||
