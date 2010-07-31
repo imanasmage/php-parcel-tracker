@@ -120,7 +120,7 @@ class DHLCarrier extends AbstractCarrier
     public function isTrackingNumber($trackingNumber) {
         $trackingNumberLen = strlen($trackingNumber);
 
-        if (($trackingNumberLen != 12 && $trackingNumberLen != 14) || !is_numeric($trackingNumber)) {
+        if (!ctype_digit($trackingNumber) || ($trackingNumberLen != 12 && $trackingNumberLen != 14)) {
             return false;
         }
 

@@ -206,7 +206,7 @@ class UPSCarrier extends AbstractCarrier
     public function isTrackingNumber($trackingNumber) {
         $trackingNumber = strtoupper($trackingNumber);
 
-        if (strpos($trackingNumber, '1Z') !== 0 || strlen($trackingNumber) != 18) {
+        if (!ctype_alnum($trackingNumber) || strpos($trackingNumber, '1Z') !== 0 || strlen($trackingNumber) != 18) {
             return false;
         }
 

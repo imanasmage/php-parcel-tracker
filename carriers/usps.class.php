@@ -117,7 +117,7 @@ class USPSCarrier extends AbstractCarrier
     public function isUSS128($trackingNumber) {
         $trackingNumberLen = strlen($trackingNumber);
 
-        if (($trackingNumberLen != 20 && $trackingNumberLen != 22 && $trackingNumberLen != 30) || !is_numeric($trackingNumber)) {
+        if (!ctype_digit($trackingNumber) || ($trackingNumberLen != 20 && $trackingNumberLen != 22 && $trackingNumberLen != 30)) {
             return false;
         }
 
@@ -153,12 +153,17 @@ class USPSCarrier extends AbstractCarrier
      * @return boolean True if the passed number is a USS 39 tracking number.
      */
     public function isUSS39($trackingNumber) {
-        if (strlen($trackingNumber) != 13 ||
-               !ctype_alpha(substr($trackingNumber, 0, 2)) || !ctype_alpha(substr($trackingNumber, -2))) {
+        if (strlen($trackingNumber) != 13) {
             return false;
         }
 
+        $trackingPrefix = substr($trackingNumber, 0, 2);
+        $trackingSuffix = substr($trackingNumber, -2);
         $trackingNumber = substr($trackingNumber, 2, -2);
+
+        if (!ctype_alpha($trackingPrefix) || !ctype_alpha($trackingSuffix) || !ctype_digit($trackingNumber)) {
+            return false;
+        }
 
         $weightings = array(8, 6, 4, 2, 3, 5, 9, 7);
         $numWeightings = 8;

@@ -119,7 +119,7 @@ class FedExCarrier extends AbstractCarrier
      * @return boolean True if the passed number is a ground shipment.
      */
     public function isGround($trackingNumber) {
-        if (strlen($trackingNumber) < 15 || !is_numeric($trackingNumber)) {
+        if (!ctype_digit($trackingNumber) || strlen($trackingNumber) < 15 || strlen($trackingNumber) > 22) {
             return false;
         }
 
@@ -157,7 +157,7 @@ class FedExCarrier extends AbstractCarrier
      * @return boolean True if the passed number is an express shipment.
      */
     public function isExpress($trackingNumber) {
-        if (strlen($trackingNumber) != 12 || !is_numeric($trackingNumber)) {
+        if (!ctype_digit($trackingNumber) || strlen($trackingNumber) != 12) {
             return false;
         }
 
