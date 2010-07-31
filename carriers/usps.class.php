@@ -96,39 +96,79 @@ class USPSCarrier extends AbstractCarrier
     }
 
     /**
-     * Validate a USPS tracking number based on USS Code 128 Subset C 20-digit barcode PIC.
-     *
-     * USPS Publication 109 was used for this implementation, the other links are provided
-     * for future cross-referencing.
-     *
-     * @link http://www.usps.com/cpim/ftp/pubs/pub109.pdf (Publication 109. Special Services Technical Guide, pg. 19)
-     * @link http://www.usps.com/cpim/ftp/pubs/pub91.pdf (Publication 91. Delivery and Signature Confirmation Numbers, pg. 79)
-     * @link http://www.usps.com/cpim/ftp/pubs/pub97.pdf (Publication 97. Express Mail Manifesting Technical Guide, pg. 59)
+     * Validate a USPS tracking number.
      *
      * @inheritdoc
      */
     public function isTrackingNumber($trackingNumber) {
+        return ($this->isUSS128($trackingNumber) ||
+                $this->isUSS39($trackingNumber));
+    }
+
+    /**
+     * Validate a USPS tracking number based on USS Code 128 Subset C 20-digit barcode PIC (human
+     * readable portion).
+     *
+     * @link http://www.usps.com/cpim/ftp/pubs/pub109.pdf (Publication 109. Extra Services Technical Guide, pg. 19)
+     * @link http://www.usps.com/cpim/ftp/pubs/pub91.pdf (Publication 91. Confirmation Services Technical Guide pg. 38)
+     *
+     * @inheritdoc
+     */
+    public function isUSS128($trackingNumber) {
         $trackingNumberLen = strlen($trackingNumber);
 
-        if (($trackingNumberLen != 20 && $trackingNumberLen != 22) || !is_numeric($trackingNumber)) {
+        if (($trackingNumberLen != 20 && $trackingNumberLen != 22 && $trackingNumberLen != 30) || !is_numeric($trackingNumber)) {
             return false;
         }
 
-        if ($trackingNumberLen == 22) {
-            // Remove service type code
-            $trackingNumber = substr($trackingNumber, 2);
-        }
-
-        $weightings = array(1, 3);
+        $weightings = array(3, 1);
         $numWeightings = 2;
 
+        if ($trackingNumberLen == 20) {
+            // Add service code to shortened number. This passes known test cases but need
+            // to verify that this is always a correct assumption.
+            $trackingNumber = '91' . $trackingNumber;
+        } elseif ($trackingNumberLen == 30) {
+            // Truncate extra information
+            $trackingNumber = substr($trackingNumber, 8, 30);
+        }
+
         $sum = 0;
-        for ($i=18; $i>=0; $i--) {
+        for ($i=20; $i>=0; $i--) {
             $sum += ($weightings[$i % $numWeightings] * $trackingNumber[$i]);
         }
 
         $checkDigit = ((ceil($sum / 10) * 10) - $sum);
 
-        return ($checkDigit == $trackingNumber[19]);
+        return ($checkDigit == $trackingNumber[21]);
+    }
+
+    /**
+     * Validate a USPS tracking number based on a USS Code 39 Barcode, this uses the MOD 11
+     * check character calculation for validating both domestic and international mail. The
+     * MOD 10 check may be used for domestic mail but is not needed in this scenario.
+     *
+     * @link http://www.usps.com/cpim/ftp/pubs/pub97.pdf (Publication 97. Express Mail Manifesting Technical Guide, pg. 64)
+     */
+    public function isUSS39($trackingNumber) {
+        if (strlen($trackingNumber) != 13 ||
+               !ctype_alpha(substr($trackingNumber, 0, 2)) || !ctype_alpha(substr($trackingNumber, -2))) {
+            return false;
+        }
+
+        $trackingNumber = substr($trackingNumber, 2, -2);
+
+        $weightings = array(8, 6, 4, 2, 3, 5, 9, 7);
+        $numWeightings = 8;
+
+        $sum = 0;
+        for ($i=0; $i<8; $i++) {
+            $sum += ($weightings[$i % $numWeightings] * $trackingNumber[$i]);
+        }
+
+        $checkDigit = ($sum % 11);
+        $checkDigit = ($checkDigit == 0) ? 5 : (($checkDigit == 1) ? 0 : (11 - $checkDigit));
+
+        return ($checkDigit == $trackingNumber[8]);
     }
 }

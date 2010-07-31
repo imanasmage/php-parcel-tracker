@@ -34,8 +34,8 @@ include_once('parceltracker.class.php');
 
 // Enter your test numbers here
 $testNumbers = array(
-    // '000123450000000027',
-    // '9611020987654312345672',
+    // '000123450000000027'           => 'fedex',
+    // '9611020987654312345672'       => 'fedex',
 );
 
 testDetection($testNumbers);
@@ -55,12 +55,16 @@ function testDetection($testNumbers) {
     $failures = 0;
     $successes = 0;
 
-    foreach ($testNumbers as $number) {
+    foreach ($testNumbers as $number => $expectedCarrier) {
         $carrier = $tracker->detectCarrier($number);
 
-        if (!$carrier) {
+        if (!$carrier || $carrier != $expectedCarrier) {
             // Assert false
-            echo "\tFAIL $number\n";
+            if ($carrier) {
+                echo "\t\tFAIL $number (got $carrier, expected $expectedCarrier)\n";
+            } else {
+                echo "\t\tFAIL $number (no match, expected $expectedCarrier)\n";
+            }
             $failures++;
         } else {
             // Assert true
